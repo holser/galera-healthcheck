@@ -9,9 +9,15 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/sttts/galera-healthcheck/healthcheck"
-	. "github.com/sttts/galera-healthcheck/logger"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/holser/galera-healthcheck/healthcheck"
+	. "github.com/holser/galera-healthcheck/logger"
+)
+
+var serverIP = flag.String(
+	"ip",
+	"127.0.0.1",
+	"Specifies the ip of healthcheck server",
 )
 
 var serverPort = flag.Int(
@@ -89,5 +95,5 @@ func main() {
 	healthchecker = healthcheck.New(db, config)
 
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(fmt.Sprintf(":%d", *serverPort), nil)
+	http.ListenAndServe(fmt.Sprintf("%s:%d", *serverIP, *serverPort), nil)
 }
