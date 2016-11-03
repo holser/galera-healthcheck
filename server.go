@@ -11,7 +11,6 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/holser/galera-healthcheck/healthcheck"
-	. "github.com/holser/galera-healthcheck/logger"
 )
 
 var serverIP = flag.String(
@@ -75,7 +74,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Galera Cluster Node status: %s", msg)
-	LogWithTimestamp(msg)
+	fmt.Fprintf(os.Stderr, "Galera Cluster Node status: %s", msg)
 }
 
 func main() {
@@ -83,6 +82,7 @@ func main() {
 
 	err := ioutil.WriteFile(*pidfile, []byte(strconv.Itoa(os.Getpid())), 0644)
 	if err != nil {
+		fmt.Fprintln(os.Stderr, "Cannot write pidfile")
 		panic(err)
 	}
 
@@ -97,3 +97,5 @@ func main() {
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(fmt.Sprintf("%s:%d", *serverIP, *serverPort), nil)
 }
+
+//  vim: set ts=2 sw=2 tw=0 noet :
