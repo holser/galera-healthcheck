@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -74,7 +75,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Galera Cluster Node status: %s", msg)
-	fmt.Fprintf(os.Stderr, "Galera Cluster Node status: %s", msg)
+	log.Printf("Galera Cluster Node status: %s", msg)
 }
 
 func main() {
@@ -82,8 +83,7 @@ func main() {
 
 	err := ioutil.WriteFile(*pidfile, []byte(strconv.Itoa(os.Getpid())), 0644)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Cannot write pidfile")
-		panic(err)
+		log.Fatalln("Cannot create file", err)
 	}
 
 	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@/", *mysqlUser, *mysqlPassword))
